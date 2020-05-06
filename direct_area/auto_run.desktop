@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Name=auto_run
+Exec=/home/pi/auto_run.sh
