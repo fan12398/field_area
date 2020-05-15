@@ -8,17 +8,17 @@ import logging
 
 #log = log.Log(__name__, file_level=logging.WARN, console_level=logging.INFO).getlog()
 
-def getCropMask(color, depth, hue):
-    ''' 拿到掩模 '''
-    ### H-[65 98] S-[33 255] V-[117 255] ###
-    ## 原 [30,100,40]
-    ##    [100,255,255]
+def getCropMask(color, depth, mid):
+    
+    lower_g = np.array([mid-40,mid-40,mid-40])
+    upper_g = np.array([mid+40,mid+40,mid+40])
+    mask = cv2.inRange(color, lower_g, upper_g)
+    '''
     hsv = cv2.cvtColor(color, cv2.COLOR_BGR2HSV)
-    #lower_g = np.array([hue-20,33,30])
-    #upper_g = np.array([hue+20,255,255])
-    lower_g = np.array([hue-20,30,30])
-    upper_g = np.array([hue+20,255,255])
+    lower_g = np.array([mid-10,0,30])
+    upper_g = np.array([mid+10,255,255])
     mask = cv2.inRange(hsv, lower_g, upper_g)
+    '''
     mask = cv2.medianBlur(mask, 5)
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
@@ -48,8 +48,8 @@ def calculateArea(depth, mask, imu_data):
     xyzpoints = depth2world(depth)
     if(len(xyzpoints) == 0):
         return(0)
-    y_angle = (imu_data[0]-90)*np.pi/180
-    x_angle = imu_data[1]*np.pi/180
+    x_angle = (imu_data[0]-180)*np.pi/180
+    y_angle = -(imu_data[1]-90)*np.pi/180
     xyzpoints = spin3D(xyzpoints, [x_angle, y_angle, 0])
     shadow = getShadowImage(xyzpoints)
     area = getShadowArea(shadow)
@@ -72,6 +72,7 @@ for i in range(points_num):
     #r = depth[valid_pos[0][i], valid_pos[1][i]]
     #points[i] = sph2cart(azim, elev, r)
 '''
+#Color 480p: [fx=408.0519104003906,fy=410.8918762207031,cx=321.9118957519531,cy=240.68490600585938]
 def depth2world(depth):
     valid_pos = depth.nonzero()
     points_num = len(valid_pos[0])

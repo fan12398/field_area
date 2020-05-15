@@ -22,10 +22,14 @@ class RGBD_Camera(object):
         self.dev = openni2.Device.open_any()
         dev_info = self.dev.get_device_info()
         depth_info = self.dev.get_sensor_info(openni2.SENSOR_DEPTH)
-        #color_info = self.dev.get_sensor_info(openni2.SENSOR_COLOR)
+        color_info = self.dev.get_sensor_info(openni2.SENSOR_COLOR)
         self.log.info("设备信息: %r" %dev_info)
-        self.log.info("Depth传感器类型：%r, 模式：%r" % (depth_info.sensorType, depth_info.videoModes))
-        #self.log.info("Color传感器类型：%r, 模式：%r" % (color_info.sensorType, color_info.videoModes))
+        self.log.debug("Depth传感器类型：%r, 模式：%r" % (depth_info.sensorType, depth_info.videoModes))
+        self.log.debug("Color传感器类型：%r, 模式：%r" % (color_info.sensorType, color_info.videoModes))
+        cam_detail = self.dev.get_property(c_api.AXONLINK_DEVICE_PROPERTY_GET_CAMERA_PARAMETERS, c_api.AXonLinkCamParam)
+        self.color_params = cam_detail.astColorParam
+        self.log.debug("Color相机校正参数960p: %r" %self.color_params[0])
+        self.log.debug("Color相机校正参数480p: %r" %self.color_params[1])
 
     def select_ImageRegistration(self, mode=0):
         mode = int(mode)

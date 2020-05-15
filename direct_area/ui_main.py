@@ -83,11 +83,15 @@ class appUI(QMainWindow, Ui_MainWindow):
             name = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '_' + str(self.area) + '.jpg'
             if(self.savepath[:5] == 'udisk'):
                 dirs = os.listdir('/media/pi')
-                if(len(dirs) == 0):
+                udisk_name = None
+                for d in dirs:
+                    if(os.access('/media/pi/'+d, os.W_OK)):
+                        udisk_name = d
+                if(udisk_name is None):
                     QMessageBox.critical(self, "保存出错", "未发现移动存储器!")
                     return
                 else:
-                    self.savepath = '/media/pi/' + dirs[-1] + self.savepath[5:]
+                    self.savepath = '/media/pi/' + udisk_name + self.savepath[5:]
             if(not os.path.exists(self.savepath)):
                 try:
                     os.mkdir(self.savepath)
@@ -95,7 +99,7 @@ class appUI(QMainWindow, Ui_MainWindow):
                     self.log.error("create "+self.savepath+" failed!")
             if(cv2.imwrite(self.savepath +'/'+ name, self.color)):
                 #cv2.imwrite(self.savepath +'/'+ "depth.png", self.depth)
-                pass
+                os.system('sync')
             else:
                 QMessageBox.critical(self, "保存出错", "无法保存到"+self.savepath+", 请检查存储器是否安装好!")
         else:
