@@ -21,7 +21,9 @@ def getRectArea_960p(depth, color, cam_param, imu_data):
     k = 1.0
     alpha1 = k * bottom_height/focus
     alpha2 = k * top_height/focus
-    spin_angles = (np.array(imu_data) + np.array([-180,0,0]))*np.pi/180
+    #spin_angles = (np.array(imu_data) + np.array([-180,0,0]))*np.pi/180
+    #integrated version
+    spin_angles = (-np.array(imu_data) + np.array([-180,0,0]))*np.pi/180
     alpha = spin_angles[1]
 
     top_width = bottom_width * np.cos(alpha+alpha2) / np.cos(alpha-alpha1)
@@ -64,7 +66,9 @@ def getRectArea_480p(depth, color, cam_param, imu_data):
     k = 1.0
     alpha1 = k * bottom_height/focus
     alpha2 = k * top_height/focus
-    spin_angles = (np.array(imu_data) + np.array([-180,0,0]))*np.pi/180
+    #spin_angles = (np.array(imu_data) + np.array([-180,0,0]))*np.pi/180
+    #integrated version
+    spin_angles = (-np.array(imu_data) + np.array([-180,0,0]))*np.pi/180
     alpha = spin_angles[1]
 
     top_width = bottom_width * np.cos(alpha+alpha2) / np.cos(alpha-alpha1)
